@@ -1,0 +1,17 @@
+#   	Name of the Data cube
+/Users/nate/Dropbox/Students/Mathieu/InclinationTests/45Inclination/ba_6.0.mass_9.5.inc_45.0.pa_0.0.veldisp_8.0.Phi_90.0.version_0_ConvolvedSourceCube.fits
+#	Mask file name
+/Users/nate/Dropbox/Students/Mathieu/InclinationTests/45Inclination/ba_6.0.mass_9.5.inc_45.0.pa_0.0.veldisp_8.0.Phi_0.0.version_0_ConvolvedSourceCube.fits
+#	Mask file type (1 == normal mask, 2 == construct mask from file using some fraction of the total flux [specify in this line])
+2	0.1
+#	The name of the output text file containing the asymmetry information
+TestAsymmetryVals_Min.txt
+#	Centre Location (Only used in the Asymmetry3D calculation, but this line is always required.)
+40.	40.0	47.
+#	Background Switch ( 1 == Estimate the asymmetry due to the background noise, 2 == no background)
+2
+#	Asymmetry Method Switch (0==Absolute sign method, 1== Squared Difference Method)
+1
+#	That random see to be used for any calculations (if >0, the time will be used to get a seed)
+-1
+

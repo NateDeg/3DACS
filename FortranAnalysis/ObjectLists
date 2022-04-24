@@ -1,0 +1,39 @@
+#  Lists of all the various file locations
+#  	Give the names of all the programs that will be made
+
+AllProgs= Asymmetry3D Min_Asymmetry3D
+
+#	First define the standard math routines needed
+StandardMathObj=BasicConstants.o random.o Interpolation.o SimpleSmoothing.o BasicDerivatives.o TabulatedIntegral.o SortArray.o
+
+#	First the files for the various object definitions and structures
+ObjectDefObj= DataCube.o Beam.o VelocityProfile.o
+
+#	The global definitions
+GlobalObj= AsymmetryGlobals.o 
+
+#	The various input routines
+InputObj= InputUnitConversions.o DataCubeInput.o AsymmetryIn.o
+
+#	The S/N estimation routines
+SNRObj= EstimateCubeNoise.o SNR_Estimate.o
+
+
+ThreeDAsymObj= ThreeDAsym_Minimum.o ThreeDAsym_Core.o AsymTypes.o
+
+#	Minimizer Routines
+MinimizationObj=DownhillSimplex.o
+
+#	The various initialisation routines
+IniObj=AsymmetryInitializations.o
+
+#	The various output routines
+OutputObj=AsymmetryOutputs.o
+
+
+#Finally list the different program main objects
+ProgramObj=Asymmetry3D.o Min_Asymmetry3D.o
+
+AllObj = $(StandardMathObj) $(ObjectDefObj) $(GlobalObj) $(InputObj) $(MinimizationObj) $(ThreeDAsymObj) $(SNRObj) $(OutputObj) $(IniObj)
+
+
