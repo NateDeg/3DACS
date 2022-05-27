@@ -168,6 +168,9 @@ c           The Mom0 map is stored in the ObservedMap object
       subroutine QuickMom0Construction()
       implicit none
       integer i,j,k
+      integer nPixel, nCells,TCells
+      real CellCount
+
 c       Copy the observed data cube header to the map
       ObservedMap%DH=ObservedDC%DH
 c       The map is only 1 channel wide
@@ -178,17 +181,38 @@ c       The channel rotation point is 0
       ObservedMap%DA%RotationPoint(3)=0
 c       The mask can't be adjusted for a moment 0 map
       ObservedMap%DH%SymmetricMaskSwitch=0
+      print*, "Moment Calculation Checks", ObservedMap%DH%Uncertainty
+
 c       Allocate the map
       call AllocateDataCube(ObservedMap)
 
 c           Loop through all pixels
+      CellCount=0.
+      nPixel=0
+      TCells=0
       do i=0,ObservedDC%DH%nPixels(0)-1
         do j=0,ObservedDC%DH%nPixels(1)-1
 c               Sum up the cube flux along the channel axis
             ObservedMap%Flux(i,j,0)=sum(ObservedDC%MaskedFlux(i,j,:))
+            nCells=0
+            do k=0,ObservedDC%DH%nChannels-1
+                if (ObservedDC%MaskedFlux(i,j,k) .ne. 0.0) then
+                    nCells=nCells+1
+                endif
+            enddo
+            CellCount=CellCount+sqrt(real(nCells))
+            TCells=TCells+nCells
+            if(ObservedMap%Flux(i,j,0) .ne. 0.0) then
+                nPixel=nPixel+1
+            endif
         enddo
       enddo
       ObservedMap%MaskedFlux=ObservedMap%Flux
+c      print*, "Total number of cells", TCells,nPixel
+      ObservedMap%DH%Uncertainty=ObservedMap%DH%Uncertainty
+     &          *CellCount/real(nPixel)
+c      print*, "New average uncertainty",ObservedMap%DH%Uncertainty
+
 c      print*, "Map Flux Check", sum(ObservedMap%Flux(:,:,0))
 c      print*, "Cube Flux Check",sum(ObservedDC%Flux)
 
@@ -201,7 +225,9 @@ c       This routine calculates the profile from the observed datacube object
 c           The profile is stored in the ObservedProfile object
       subroutine QuickProfileConstruction()
       implicit none
-      integer i
+      integer i,j,k
+      integer nChan, nCells,TCells
+      real CellCount
 
 c       Copy the observed data cube header to the profile
       ObservedProfile%DH=ObservedDC%DH
@@ -216,11 +242,33 @@ c       The mask can't be adjusted for a profile
 c           Allocate the profile
       call AllocateDataCube(ObservedProfile)
 c           Loop over all channels
+      CellCount=0.
+      TCells=0
+      nChan=0
       do i=0,ObservedDC%DH%nChannels-1
 c           Sum the flux in all pixels for a given channel
         ObservedProfile%Flux(0,0,i)=sum(ObservedDC%MaskedFlux(:,:,i))
+        
+        nCells=0
+        do j=0,ObservedDC%DH%nPixels(0)-1
+            do k=0,ObservedDC%DH%nPixels(1)-1
+                if (ObservedDC%MaskedFlux(j,k,i) .ne. 0.0) then
+                    nCells=nCells+1
+                endif
+            enddo
+        enddo
+        CellCount=CellCount+sqrt(real(nCells))
+        TCells=TCells+nCells
+        if(ObservedProfile%Flux(0,0,i) .ne. 0.0) then
+            nChan=nChan+1
+        endif
       enddo
       ObservedProfile%MaskedFlux=ObservedProfile%Flux
+c      print*, "Orignal uncertainty",ObservedProfile%DH%Uncertainty
+c      print*, CellCount,TCells,nChan
+      ObservedProfile%DH%Uncertainty=ObservedProfile%DH%Uncertainty
+     &          *CellCount/real(nChan)
+c      print*, "New Profile uncertainty",ObservedProfile%DH%Uncertainty
 c      print*,"Profile Flux Check", sum(ObservedProfile%Flux(0,0,:))
       return
       end subroutine

@@ -95,10 +95,23 @@ c           Write out the 2D asymmetry measures
             LineStr=trim(LineStr)//"]"
         endif
       enddo
-      write(WriteUnit,'(a)') trim(LineStr)
+
+      VarName="Map_RMS"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedMap%DH%Uncertainty,LineStr)
+
+      VarName="A2D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedMap%DA%Asym,LineStr)
+
       VarName="C2D"
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedMap%DA%Signal_Asym,LineStr)
+
+      write(WriteUnit,'(a)') trim(LineStr)
+      VarName="B2D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedMap%DA%Back_Asym,LineStr)
 
       VarName="P2D"
       call WriteRealOutputStr(WriteUnit,VarName
@@ -118,7 +131,20 @@ c           Write out the 1D asymmetry measures
       LineStr=trim(LineStr)//trim(ValStr)
       LineStr=trim(LineStr)//"]"
       write(WriteUnit,'(a)') trim(LineStr)
+
+      VarName="Profile_RMS"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DH%Uncertainty,LineStr)
+
+      VarName="A1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%Asym,LineStr)
+
       VarName="C1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%Signal_Asym,LineStr)
+
+      VarName="B1D"
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedProfile%DA%Signal_Asym,LineStr)
 

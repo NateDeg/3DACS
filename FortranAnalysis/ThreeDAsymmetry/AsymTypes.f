@@ -123,15 +123,15 @@ ccccc
       real T1,T2
 
       BackSum=2.*real(nPairs)*RMS**2.
-      BackSum=0.
-      do i=1, nPairs
-        T1=gasdev(idum)*RMS
-        T2=gasdev(idum)*RMS
-        BackSum=BackSum+(T1-T2)**2.
-      enddo
-      print*, "Squared Background summation",BackSum,RMS
-     &          , 2.*nPairs*RMS**2.
-     &          , 4.*nPairs*RMS**2./3.1415921
+c      BackSum=0.
+c      do i=1, nPairs
+c        T1=gasdev(idum)*RMS
+c        T2=gasdev(idum)*RMS
+c        BackSum=BackSum+(T1-T2)**2.
+c      enddo
+c      print*, "Squared Background summation",BackSum,RMS
+c     &          , 2.*nPairs*RMS**2.
+c     &          , 4.*nPairs*RMS**2./3.1415921
       return
       end subroutine
 cccccc

@@ -73,18 +73,16 @@ c           Do the full 3D asymmetry calculation
       call ThreeDAsym_CenterSet(ObservedDC)
 
 c           Do the moment map signal asymmetry
-      call GetSignalAsym(ObservedMap,MapAsym)
-      ObservedMap%DA%Signal_Asym=MapAsym%Asym
-      ObservedMap%DA%Asym=MapAsym%Asym
-      ObservedMap%DA%TotAbsDiff=MapAsym%TotAbsDiff
-      ObservedMap%DA%TotFlux=MapAsym%TotFlux
+      call ThreeDAsym_CenterSet(ObservedMap)
+c      call GetSignalAsym(ObservedMap,MapAsym)
+c      ObservedMap%DA%Signal_Asym=MapAsym%Asym
+c      ObservedMap%DA%Asym=MapAsym%Asym
+c      ObservedMap%DA%TotAbsDiff=MapAsym%TotAbsDiff
+c      ObservedMap%DA%TotFlux=MapAsym%TotFlux
 
 
 c           Also do the moment map signal asymmetry
-      call GetSignalAsym(ObservedProfile,ProfileAsym)
-      ObservedProfile%DA%Signal_Asym=ProfileAsym%Asym
-      ObservedProfile%DA%TotAbsDiff =ProfileAsym%TotAbsDiff
-      ObservedProfile%DA%TotFlux=ProfileAsym%TotFlux
+      call ThreeDAsym_CenterSet(ObservedProfile)
 
 
       print*, " "
@@ -103,14 +101,22 @@ c           Also do the moment map signal asymmetry
       print*, " "
       print*, "2D Asymmetry calculated about point:"
      &              ,ObservedMap%DA%RotationPoint(1:2)
-      print*, "2D Signal Asymmetry", ObservedMap%DA%Asym
+      print*, "2D RMS Estimate: "
+     &          ,ObservedMap%DH%Uncertainty
+      print*, "2D Total Asymmetry", ObservedMap%DA%Asym
+      print*, "2D Signal Asymmetry =", ObservedMap%DA%Signal_Asym
+      print*, "2D Background Asymmetry =", ObservedMap%DA%Back_Asym
       print*, "Total Numerator =", ObservedMap%DA%TotAbsDiff
       print*, "Total Denominator =", ObservedMap%DA%TotFlux
 
       print*, " "
       print*, "1D Asymmetry calculated about point:"
      &              ,ObservedProfile%DA%RotationPoint(3)
-      print*, "1D Signal Asymmetry", ObservedProfile%DA%Signal_Asym
+      print*, "1D RMS Estimate: "
+     &          ,ObservedProfile%DH%Uncertainty
+      print*, "1D Total Asymmetry", ObservedProfile%DA%Asym
+      print*, "1D Signal Asymmetry =", ObservedProfile%DA%Signal_Asym
+      print*, "1D Background Asymmetry =", ObservedProfile%DA%Back_Asym
       print*, "Total Numerator =", ObservedProfile%DA%TotAbsDiff
       print*, "Total Denominator =", ObservedProfile%DA%TotFlux
 
