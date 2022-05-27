@@ -64,6 +64,14 @@ c           Write out the 3D asymmetry measures
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedDC%DA%Signal_Asym,LineStr)
 
+      VarName="P3D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedDC%DA%TotAbsDiff,LineStr)
+
+      VarName="Q3D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedDC%DA%TotFlux,LineStr)
+
       VarName="B3D"
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedDC%DA%Back_Asym,LineStr)
@@ -92,6 +100,15 @@ c           Write out the 2D asymmetry measures
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedMap%DA%Signal_Asym,LineStr)
 
+      VarName="P2D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedMap%DA%TotAbsDiff,LineStr)
+
+      VarName="Q2D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedMap%DA%TotFlux,LineStr)
+
+
 
 c           Write out the 1D asymmetry measures
       write(WriteUnit,'(a)') ""
@@ -104,6 +121,14 @@ c           Write out the 1D asymmetry measures
       VarName="C1D"
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedProfile%DA%Signal_Asym,LineStr)
+
+      VarName="P1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%TotAbsDiff,LineStr)
+
+      VarName="Q1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%TotFlux,LineStr)
 
       close(10)
 

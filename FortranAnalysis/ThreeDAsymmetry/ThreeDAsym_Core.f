@@ -21,7 +21,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
      &              ,POINTER :: AsymCombPoint =>null()
       PROCEDURE(MeasAsymInterface)
      &              ,POINTER :: MeasAsymPoint =>null()
-
+      PROCEDURE(BackgroundInterface)
+     &              ,POINTER :: BackAsymPoint =>null()
 
 
       ABSTRACT INTERFACE
@@ -50,6 +51,14 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
         END subroutine MeasAsymInterface
       END INTERFACE
 
+      ABSTRACT INTERFACE
+        subroutine BackgroundInterface(BackSum,nPairs,RMS)
+            IMPLICIT NONE
+            integer, INTENT(IN) :: nPairs
+            real, INTENT(IN) :: RMS
+            real, INTENT(INOUT) :: BackSum
+        END subroutine BackgroundInterface
+      END INTERFACE
 
       contains
 
@@ -73,11 +82,13 @@ c      Get the signal asymmetry value
       call GetSignalAsym(DC,CubeAsym)
 c       Set the cube signal asymmetry value
       DC%DA%Signal_Asym=CubeAsym%Asym
+      DC%DA%TotAbsDiff=CubeAsym%TotAbsDiff
+      DC%DA%TotFlux=CubeAsym%TotFlux
 c
       if(DC%DA%BackgroundAsymFlag) then
-        call EstimateNoiseSignal(BackSum,CubeAsym%nPairs
+        call BackAsymPoint(BackSum,CubeAsym%nPairs
      &          ,DC%DH%Uncertainty)
-        DC%DA%Back_Asym=BackSum/CubeAsym%TotFlux
+        DC%DA%Back_Asym=BackSum
       else
         DC%DA%Back_Asym=0.
       endif
@@ -232,12 +243,12 @@ c      Asym%Asym=Asym%TotAbsDiff/Asym%TotFlux
       call AsymCombPoint(Asym)
       Asym%nPairs=nPairs
 c       Try this
-       print*, "Counted nPairs",nPairs
+c       print*, "Counted nPairs",nPairs
 c      nPairs=Extent(1)*Extent(2)*Extent(3)/2
 c      Asym%nPairs=nPairs
-      print*, "Asym Test",Asym%Asym
-     &          ,Asym%TotAbsDiff,Asym%TotFlux,nPairs
-     &          , "Squared Method"
+c      print*, "Asym Test",Asym%Asym
+c     &          ,Asym%TotAbsDiff,Asym%TotFlux,nPairs
+c     &          , "Squared Method"
 
       return
       end subroutine
@@ -388,9 +399,11 @@ c      BackSum=real(nPairs)*2.*RMS/sqrt(3.1415)
       do i=1, nPairs
         T1=gasdev(idum)*RMS
         T2=gasdev(idum)*RMS
-        BackSum=BackSum+abs(T1-T2)
+        BackSum=BackSum+(T1-T2)**2.
       enddo
-c      print*, "Background summation",BackSum,RMS
+      print*, "Background summation",BackSum,RMS
+     &          , 2.*nPairs*RMS**2.
+     &          , 4.*nPairs*RMS**2./3.1415921
       return
       end subroutine
 cccccc

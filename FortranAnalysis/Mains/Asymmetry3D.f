@@ -33,10 +33,12 @@ c       SET THE SWITCH FOR ABSOLUTE OR SQUARED DIFFERENCE ASYMMETRY
         AsymPtPoint => AbsoluteAsymPtSum
         AsymCombPoint => AbsoluteAsymTermComb
         MeasAsymPoint => AbsoluteMeasAsymCalc
+        BackAsymPoint => AbsoluteBackAsymCalc
       elseif (ObservedDC%DA%AsymMethodSwitch .eq. 1) then
         AsymPtPoint => SquaredAsymPtSum
         AsymCombPoint => SquaredAsymTermComb
         MeasAsymPoint => SquaredMeasAsymCalc
+        BackAsymPoint => SquaredBackAsymCalc
       endif
 
 c       Since we have the noise and beam and have masked the cube, we can
@@ -60,7 +62,7 @@ c           Remask the data
 
         call QuickProfileConstruction()
 
-        endif
+      endif
 
 c      call MakeSymmetricMask(ObservedDC%DA%RotationPoint
 c     &          ,DataCubeMask,SymmetricMask)
@@ -73,10 +75,16 @@ c           Do the full 3D asymmetry calculation
 c           Do the moment map signal asymmetry
       call GetSignalAsym(ObservedMap,MapAsym)
       ObservedMap%DA%Signal_Asym=MapAsym%Asym
+      ObservedMap%DA%Asym=MapAsym%Asym
+      ObservedMap%DA%TotAbsDiff=MapAsym%TotAbsDiff
+      ObservedMap%DA%TotFlux=MapAsym%TotFlux
+
 
 c           Also do the moment map signal asymmetry
       call GetSignalAsym(ObservedProfile,ProfileAsym)
       ObservedProfile%DA%Signal_Asym=ProfileAsym%Asym
+      ObservedProfile%DA%TotAbsDiff =ProfileAsym%TotAbsDiff
+      ObservedProfile%DA%TotFlux=ProfileAsym%TotFlux
 
 
       print*, " "
@@ -88,15 +96,23 @@ c           Also do the moment map signal asymmetry
       print*, "Signal Asymmetry =", ObservedDC%DA%Signal_Asym
       print*, "Background Asymmetry =", ObservedDC%DA%Back_Asym
       print*, "Total Asymmetry =", ObservedDC%DA%Asym
+      print*, "Total Numerator =", ObservedDC%DA%TotAbsDiff
+      print*, "Total Denominator =", ObservedDC%DA%TotFlux
+
+
       print*, " "
       print*, "2D Asymmetry calculated about point:"
      &              ,ObservedMap%DA%RotationPoint(1:2)
-      print*, "2D Signal Asymmetry", MapAsym%Asym
+      print*, "2D Signal Asymmetry", ObservedMap%DA%Asym
+      print*, "Total Numerator =", ObservedMap%DA%TotAbsDiff
+      print*, "Total Denominator =", ObservedMap%DA%TotFlux
 
       print*, " "
       print*, "1D Asymmetry calculated about point:"
      &              ,ObservedProfile%DA%RotationPoint(3)
       print*, "1D Signal Asymmetry", ObservedProfile%DA%Signal_Asym
+      print*, "Total Numerator =", ObservedProfile%DA%TotAbsDiff
+      print*, "Total Denominator =", ObservedProfile%DA%TotFlux
 
 
       call OutputAsymmetry(SNPeak,SNA,SN_Int)
