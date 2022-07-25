@@ -20,9 +20,13 @@ c           It assumes that the cube has already been masked
       real TotFlux, FluxSum
       integer TotCells
 
+      real*8 CellFluxLim
+
       real,ALLOCATABLE :: FlatFlux(:)
       integer,ALLOCATABLE :: FlatIndx(:)
       integer i, j,count
+      integer k,nCount
+      integer MedIndx
 
 
       print*, "Estimate S/N"
@@ -36,12 +40,19 @@ c       Get the average S/N
       SN_Avg=TotFlux/TotCells
 
 c       Allocate the flattened flux array
-c      ALLOCATE(FlatFlux(TotCells))
-c      ALLOCATE(FlatIndx(TotCells))
+      ALLOCATE(FlatFlux(TotCells))
+      ALLOCATE(FlatIndx(TotCells))
 c       Loop through the cells and fill the flattened flux array
-c      call MakeMaskedFlatFluxArr(Cube,MaskCube,FlatFlux,TotCells)
+      call MakeMaskedFlatFluxArr(Cube,MaskCube,FlatFlux,TotCells)
 c       Sort the flattened array
-c      call indexx(TotCells,FlatFlux,FlatIndx)
+      call indexx(TotCells,FlatFlux,FlatIndx)
+
+      MedIndx=TotCells/2
+
+c      print*, "Median checks", FlatFlux(FlatIndx(1))
+c     &          ,FlatFlux(FlatIndx(TotCells))
+c     &          ,FlatFlux(FlatIndx(MedIndx))
+      
 c       Go through the flattened array until we reach 99% of the total flux
 c      fluxSum=0.
 c      do i=TotCells,1,-1
@@ -55,8 +66,31 @@ c      enddo
 c100   continue
 c       Now get the S/N_99 using the equation from Appendix A of Westmeier et al. 2021
 
+
       SNR99=TotFlux/((sqrt(TotCells*Beam%BeamAreaPixels))
      &                  *Cube%DH%Uncertainty)
+
+    
+      CellFluxLim=Cube%DH%Uncertainty*1.5
+      TotFlux=0.
+      TotCells=0
+      do i=0,Cube%DH%nPixels(0)-1
+        do j=0,Cube%DH%nPixels(1)-1
+            do k=0,Cube%DH%nChannels-1
+                if(Cube%MaskedFlux(i,j,k) .ge. CellFluxLim) then
+                    TotCells=TotCells+1
+                    TotFlux=TotFlux+Cube%MaskedFlux(i,j,k)
+                endif
+            enddo
+        enddo
+      enddo
+
+      SNR99=TotFlux/((sqrt(TotCells*Beam%BeamAreaPixels))
+     &                  *Cube%DH%Uncertainty)
+
+c       This uses the median definition for the S/N
+      SNR99=FlatFlux(FlatIndx(MedIndx))/Cube%DH%Uncertainty
+
 c      print*, "SN99 Test", SNR99, FluxSum,count,Beam%BeamAreaPixels
 c     &              ,Cube%DH%Uncertainty
 c     &              ,sqrt(count*Beam%BeamAreaPixels)
