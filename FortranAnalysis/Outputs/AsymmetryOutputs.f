@@ -11,9 +11,9 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
       contains
 ccccc
 c
-      subroutine OutputAsymmetry(SNPeak,SNAvg,SNInt)
+      subroutine OutputAsymmetry(SNPeak,SNAvg,SNInt,SN_Med)
       implicit none
-      real,INTENT(IN) :: SNPeak,SNAvg,SNInt
+      real,INTENT(IN) :: SNPeak,SNAvg,SNInt,SN_Med
       
       character(100) LineStr
       character(50) VarName
@@ -44,6 +44,10 @@ c           Write out the cube measurements
       VarName="SN_Avg"
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,SNAvg,LineStr)
+
+      VarName="SN_Median"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,SN_Med,LineStr)
 
 c           Write out the 3D asymmetry measures
       write(WriteUnit,'(a)') ""

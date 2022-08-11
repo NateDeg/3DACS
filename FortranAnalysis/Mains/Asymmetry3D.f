@@ -17,7 +17,7 @@ c       Modules neeeded at this level
       use AsymTypesMod
       implicit none
 
-      real SNPeak,SNA,SN_Int
+      real SNPeak,SNA,SN_Int,SN_Med
       integer i,j,k
       Type(DataCubeAsymmetry) MapAsym,ProfileAsym
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -44,7 +44,7 @@ c       SET THE SWITCH FOR ABSOLUTE OR SQUARED DIFFERENCE ASYMMETRY
 c       Since we have the noise and beam and have masked the cube, we can
 c           get some S/N measures
       call SNREstimate(ObservedDC,DataCubeMask,Beam
-     &                    ,SNPeak,SNA,SN_Int)
+     &                    ,SNPeak,SNA,SN_Int,SN_Med)
 
       print*, "Symmetric Flag",ObservedDC%DH%SymmetricMaskSwitch
 c           Symmeterize the mask about the rotation point
@@ -52,6 +52,7 @@ c           Symmeterize the mask about the rotation point
         call MakeSymmetricMask(ObservedDC%DA%RotationPoint
      &          ,DataCubeMask,SymmetricMask)
 c           Remask the data
+c        SymmetricMask=DataCubeMask
         call MaskCube(SymmetricMask,ObservedDC)
 
         call QuickMom0Construction()
@@ -88,7 +89,7 @@ c           Also do the moment map signal asymmetry
       print*, " "
       print*, "Done Asymmetry calculation"
       print*, "Cell rms and integrated S/N measurement: "
-     &          ,ObservedDC%DH%Uncertainty, SN_Int
+     &          ,ObservedDC%DH%Uncertainty, SN_Int,SN_Med
       print*, "Asymmetry calculated about point: "
      &          , ObservedDC%DA%RotationPoint
       print*, "Signal Asymmetry =", ObservedDC%DA%Signal_Asym
@@ -121,7 +122,7 @@ c           Also do the moment map signal asymmetry
       print*, "Total Denominator =", ObservedProfile%DA%TotFlux
 
 
-      call OutputAsymmetry(SNPeak,SNA,SN_Int)
+      call OutputAsymmetry(SNPeak,SNA,SN_Int,SN_Med)
 
       end
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc

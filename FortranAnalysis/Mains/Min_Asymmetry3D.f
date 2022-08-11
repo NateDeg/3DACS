@@ -18,7 +18,7 @@ c       Modules neeeded at this level
 
       implicit none
 
-      real SNPeak,SNA,SN_Int
+      real SNPeak,SNA,SN_Int,SN_Med
       integer i,j,k
       Type(DataCubeAsymmetry) MapAsym,ProfileAsym
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -48,7 +48,7 @@ c       SET THE SWITCH FOR ABSOLUTE OR SQUARED DIFFERENCE ASYMMETRY
 c       Since we have the noise and beam and have masked the cube, we can
 c           get some S/N measures
       call SNREstimate(ObservedDC,DataCubeMask,Beam
-     &                    ,SNPeak,SNA,SN_Int)
+     &                    ,SNPeak,SNA,SN_Int,SN_Med)
 
       print*, "Symmetric Flag",ObservedDC%DH%SymmetricMaskSwitch
 c       The minimzer can't do symmetric masking every step with the 1D and 2D, so the best idea is to use the asymmetric mask to make the moment maps then symmetrize when doing the 3D minimization.  This is built into the minimzer, so we don't need to do any work on that here.
@@ -72,7 +72,7 @@ c           Do the full 3D asymmetry calculation
       print*, " "
       print*, "Done Asymmetry calculation"
       print*, "Cell rms and integrated S/N measurement: "
-     &          ,ObservedDC%DH%Uncertainty, SN_Int
+     &          ,ObservedDC%DH%Uncertainty, SN_Int,SN_Med
       print*, "Asymmetry calculated about point: "
      &          , ObservedDC%DA%RotationPoint
       print*, "Signal Asymmetry =", ObservedDC%DA%Signal_Asym
@@ -97,7 +97,7 @@ c           Do the full 3D asymmetry calculation
       print*, "Total Denominator =", ObservedProfile%DA%TotFlux
 
 
-      call OutputAsymmetry(SNPeak,SNA,SN_Int)
+      call OutputAsymmetry(SNPeak,SNA,SN_Int,SN_Med)
 
       end
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
