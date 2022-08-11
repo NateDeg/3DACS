@@ -27,11 +27,21 @@ c       YValue
       real,INTENT(IN) :: P1(2),P2(2), XTarg
       real,INTENT(INOUT) :: YIntVal
       real slope,delX
-
+      real eps
+      eps=1.e-10
 c      print*, "Linear interpolate",P1, P2,XTarg
       slope=(P2(2)-P1(2))/(P2(1)-P1(1))
       delX=XTarg-P1(1)
       YIntVal=delX*slope+P1(2)
+c       Try this
+c      if(P1(2) .eq. 0. .or. P2(2) .eq. 0.) then
+c      if(abs(P1(2)) .le. eps .or. abs(P2(2)) .le. 0.) then
+c        if (XTarg .ne. P1(1) .or. XTarg .ne. P2(1)) then
+c            YIntVal=0.
+c        endif
+c      endif
+c      print*, "inter",P1,P2,XTarg,YIntVal
+
       return
       end subroutine
 ccccc

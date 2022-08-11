@@ -155,7 +155,7 @@ ccccccccc
       subroutine Main3DAsymLoop(RotPt,Extent,DC,Asym)
       implicit none
       real,INTENT(IN) :: RotPt(3)
-      integer, INTENT(IN) :: Extent(3)
+      integer, INTENT(INOUT) :: Extent(3)
       Type(DataCube), INTENT(IN) :: DC
       Type(DataCubeAsymmetry), INTENT(INOUT) :: Asym
 
@@ -190,21 +190,28 @@ c      print*, "main asym loop", CentIndx, Extent
 c      i=37
 c      j=37
 c      k=0
+c      print*, "Cent Pt Check", RotPt, CentIndx
+c      print*, "Extent Check", Extent
+c      print*, "Flux", DC%Flux(CentIndx(1),CentIndx(2),CentIndx(3))
+c      Extent(1:3)=Extent(1:3)-50
 
-
-
+c      print*, "loop low lims", CentIndx-Extent
+c      print*, "loop high lims", CentIndx+Extent
 c           Loop through all pixels
 c      do i=0, Extent(1)/2   !One dimension can be cut in half to get all pairs
-c      do i=-3,-3
+c      do i=60,60
       do i=CentIndx(1)-Extent(1)/2,CentIndx(1)+Extent(1)/2
+
 c        print*, i,Asym%TotFlux,nPairs
 c           Use i,j,k to identify the current index
         CurrIndx(1)=i
 c        print*, i,Extent(1)-1
 c        do j=0,Extent(2)-1
+c        do j=47,47
         do j=CentIndx(2)-Extent(2)/2,CentIndx(2)+Extent(2)/2
             CurrIndx(2)=j
 c            do k=0,Extent(3)-1
+c            do k=49,49
             do k=CentIndx(3)-Extent(3)/2,CentIndx(3)+Extent(3)/2
                 CurrIndx(3)=k
 c          Get precise position for the pair of points
@@ -220,17 +227,27 @@ c                Asym%TotFlux=Asym%TotFlux+Ai+Bi       !The normal definition
 c               THIS USING OUR NEW SQUARED DIFFERENCE METHOD
 c                Asym%TotAbsDiff=Asym%TotAbsDiff+(Ai-Bi)**2.
 c                Asym%TotFlux=Asym%TotFlux+(Ai+Bi)**2.       !The normal definition
-                call AsymPtPoint(Asym,Ai,Bi)
+c                call AsymPtPoint(Asym,Ai,Bi)
 c                   Check that both points have flux in case of masking
+c                if(Ai .gt. 0. .and. Bi .gt. 0.) then
                 if(Ai .ne. 0. .or. Bi .ne. 0.) then
+c                    if(Ai .lt. 0. .or. Bi .lt. 0.) then
+c                        print*, "Point below zero flux", i,j,K
+c     &                  ,PosPt,Ai,NegPt,Bi
+c                    endif
+c                    if(Ai .eq. 0. .or. Bi .eq. 0.) then
+c                        print*, "hmmm", Ai,PosPt,Bi,NegPt
+c                        print*, i,j,k
+c            call GetFluxByInterpolation_Spec(PosPt,DC,Ai,Size)
+c            call GetFluxByInterpolation_Spec(NegPt,DC,Bi,Size)
+c                    endif
+
 c                   Keep track of the number of unique pairs
+                    call AsymPtPoint(Asym,Ai,Bi)
                     nPairs=nPairs +1
 c                    print*, i,j,k,PosPt,NegPt,Ai,Bi
                 endif
-c                if(Ai .lt. 0. .or. Bi .lt. 0.) then
-c                    print*, "Point below zero flux", i,j,K
-c     &                  ,PosPt,Ai,NegPt,Bi
-c                endif
+
             enddo
         enddo
       enddo
@@ -364,11 +381,17 @@ c                print*, kk,jj,ii,ll
 c                print*, "Corner Pts", ll,CornerPts(ll,1:3)
 c     &                  ,BoundCheck,Size
                 if(BoundCheck) then
-                    CornerPts(ll,4)=DC%MaskedFlux(kk,jj,ii)
+c                    CornerPts(ll,4)=DC%MaskedFlux(kk,jj,ii)
+                    CornerPts(ll,4)=DC%Flux(kk,jj,ii)
 c                    print*,"Corner checck", DC%Flux(kk,jj,ii)
                 else
                     CornerPts(ll,4)=0.
                 endif
+c               If any corner points flux is zero, set the total flux to zero...
+c                if (CornerPts(ll,4) .eq. 0.) then
+c                    Flux=0.
+c                    return
+c                endif
 c                print*, "Corner Pts", ll,CornerPts(ll,1:4)
             enddo
         enddo
@@ -377,6 +400,13 @@ c           Use trilinear interpolation to get the flux at the specified point
       call TriLinearInterpolation(InterpolatePt,CornerPts) !/src/StandardMath/Interpolation.f
 c      print*, "Interpolated flux", InterpolatePt
       Flux=InterpolatePt(4)
+      kk=CurrIndx(1)
+      jj=CurrIndx(2)
+      ii=CurrIndx(3)
+c      print*, CurrIndx,Pt,Flux
+      if(DC%MaskedFlux(kk,jj,ii) .eq. 0.) then
+        Flux=0.
+      endif
 
       return
       end subroutine
@@ -428,6 +458,7 @@ cccc
 
       print*, "Making a mask symmetric about the rotation point"
      &          , RotPt
+      print*, "Initial number of cells", sum(MaskedDC%Flux)
 c       First set the Symmeterized mask flux to match the mask
       SymMaskedDC%Flux=MaskedDC%Flux
 c           First determine the extent that we're going to need
@@ -481,6 +512,7 @@ c                print*, i,j,k,PosIndx,NegIndx,RotPt
             enddo
         enddo
       enddo
+      print*, "Final numbler of cells", sum(SymMaskedDC%Flux)
 
       return
       end subroutine
@@ -508,5 +540,69 @@ c           This subroutine gets indices matching points
 cccccc
 
 
+
+ccccc
+c
+      subroutine GetFluxByInterpolation_Spec(Pt,DC,Flux,Size)
+      implicit none
+      integer,INTENT(IN) :: Size(3)
+      real,INTENT(IN) :: Pt(3)
+      Type(DataCube),INTENT(IN) :: DC
+      real,INTENT(INOUT)::Flux
+
+      integer i,j,k,ii,jj,kk,ll,CurrIndx(3)
+      real CornerPts(8,4),InterpolatePt(4)
+      logical BoundCheck
+
+c      print*,"DC shape", shape(DC%Flux)
+c       Get the indices of the lower corner of the box
+      do i=1,3
+        CurrIndx(i)=int(Pt(i))
+      enddo
+
+c       Set the interpolated point position
+      InterpolatePt(1:3)=Pt(1:3)
+c       Place the cube values that surround the point into an array
+c               Note that the order has to be lower vel to upper vel
+      do i=1,2
+        ii=CurrIndx(3)+(i-1)
+        do j=1,2
+            jj=CurrIndx(2)+(j-1)
+            do k=1,2
+                kk=CurrIndx(1)+(k-1)
+c                   Get the count for the corners
+                ll=k+(j-1)*2+(i-1)*2*2
+c               Set the corner point values
+                CornerPts(ll,1)=real(kk)
+                CornerPts(ll,2)=real(jj)
+                CornerPts(ll,3)=real(ii)
+c                print*, kk,jj,ii,ll
+                call GetBoundCheck(CornerPts(ll,1:3),Size,BoundCheck)
+c                print*, "Corner Pts", ll,CornerPts(ll,1:3)
+c     &                  ,BoundCheck,Size
+                if(BoundCheck) then
+                    CornerPts(ll,4)=DC%MaskedFlux(kk,jj,ii)
+c                    CornerPts(ll,4)=DC%Flux(kk,jj,ii)
+c                    print*,"Corner checck", DC%Flux(kk,jj,ii)
+                else
+                    CornerPts(ll,4)=0.
+                endif
+c               If any corner points flux is zero, set the total flux to zero...
+c                if (CornerPts(ll,4) .eq. 0.) then
+c                    Flux=0.
+c                    return
+c                endif
+                print*, "Corner Pts", ll,CornerPts(ll,1:4)
+            enddo
+        enddo
+      enddo
+c           Use trilinear interpolation to get the flux at the specified point
+      call TriLinearInterpolation(InterpolatePt,CornerPts) !/src/StandardMath/Interpolation.f
+      print*, "Interpolated flux", InterpolatePt
+      Flux=InterpolatePt(4)
+
+      return
+      end subroutine
+ccccccc
 
       end module
