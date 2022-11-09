@@ -65,6 +65,18 @@ c        SymmetricMask=DataCubeMask
 
       endif
 
+      if (ObservedDC%DA%AsymMethodSwitch .eq. 0) then
+        ObservedProfile%DH%Uncertainty
+     &          =ObservedProfile%DH%ExpectedUncertainty
+        ObservedMap%DH%Uncertainty
+     &          =ObservedMap%DH%ExpectedUncertainty
+      elseif (ObservedDC%DA%AsymMethodSwitch .eq. 1) then
+        ObservedProfile%DH%Uncertainty
+     &          =ObservedProfile%DH%ExpectedUncertaintySquared
+        ObservedMap%DH%Uncertainty
+     &          =ObservedMap%DH%ExpectedUncertaintySquared
+      endif
+
 c      call MakeSymmetricMask(ObservedDC%DA%RotationPoint
 c     &          ,DataCubeMask,SymmetricMask)
 cc           Remask the data

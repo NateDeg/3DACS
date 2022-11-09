@@ -209,8 +209,15 @@ c               Sum up the cube flux along the channel axis
       enddo
       ObservedMap%MaskedFlux=ObservedMap%Flux
 c      print*, "Total number of cells", TCells,nPixel
-      ObservedMap%DH%Uncertainty=ObservedMap%DH%Uncertainty
+      ObservedMap%DH%ExpectedUncertainty
+     &          =ObservedMap%DH%Uncertainty
      &          *CellCount/real(nPixel)
+      ObservedMap%DH%ExpectedUncertaintySquared
+     &          =ObservedMap%DH%Uncertainty
+     &          *sqrt(TCells/real(nPixel))
+
+c      ObservedMap%DH%Uncertainty=ObservedMap%DH%Uncertainty
+c     &          *CellCount/real(nPixel)
 c      print*, "New average uncertainty",ObservedMap%DH%Uncertainty
 
 c      print*, "Map Flux Check", sum(ObservedMap%Flux(:,:,0))
@@ -266,6 +273,14 @@ c           Sum the flux in all pixels for a given channel
       ObservedProfile%MaskedFlux=ObservedProfile%Flux
 c      print*, "Orignal uncertainty",ObservedProfile%DH%Uncertainty
 c      print*, CellCount,TCells,nChan
+      ObservedProfile%DH%ExpectedUncertainty
+     &          =ObservedMap%DH%Uncertainty
+     &          *CellCount/real(nChan)
+      ObservedProfile%DH%ExpectedUncertaintySquared
+     &          =ObservedMap%DH%Uncertainty
+     &          *sqrt(TCells/real(nChan))
+
+
       ObservedProfile%DH%Uncertainty=ObservedProfile%DH%Uncertainty
      &          *CellCount/real(nChan)
 c      print*, "New Profile uncertainty",ObservedProfile%DH%Uncertainty

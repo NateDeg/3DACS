@@ -25,7 +25,7 @@ c
 c
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c
-c      print*, 'indexx', arr, n
+      print*, 'indexx',size(arr), n
       do 11 j=1, n
          indx(j)=j
  11   enddo

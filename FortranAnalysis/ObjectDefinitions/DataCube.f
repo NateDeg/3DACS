@@ -18,6 +18,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
         integer DimensionUnitSwitch(0:3)    !0->PixelSize, 1->ChannelSize, 2->RefVal(0:1), 3->RefVal(2)
         integer UncertaintyUnitSwitch
         real Uncertainty
+        real ExpectedUncertainty
+        real ExpectedUncertaintySquared
         character(10) FUnit,FType
         real Epoch
         integer PixelCenterIndx(0:1),ChannelCenterIndx

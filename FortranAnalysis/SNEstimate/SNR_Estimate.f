@@ -34,6 +34,7 @@ c       Get the average S/N
       TotFlux=sum(Cube%MaskedFlux)
       TotCells=int(Sum(MaskCube%Flux))
       SN_Avg=TotFlux/TotCells
+      print*, "Total number of cells", TotCells
 
 c       Now get the S/N_99 using the equation from Appendix A of Westmeier et al. 2021
 
