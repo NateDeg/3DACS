@@ -1,6 +1,6 @@
-ThreeDAsymmetries
+3D Asymmetries in data CubeS
 
-version: 0.5
+version: 1.
 ----
 Description:
 
