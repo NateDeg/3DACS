@@ -1,6 +1,9 @@
 3D Asymmetries in data CubeS
 
-version: 1.
+version: 1.0
+
+Nov. 9, 2022
+
 ----
 Description:
 
