@@ -82,21 +82,21 @@ Inputs
 There are a variety of required inputs in the input file.  The file format structure is
 
 
-       Name of the Data cube
+Name of the Data cube
 filename
-    Mask file name
+Mask file name
 filename
-    Mask file type (1 == normal mask, 2 == construct mask from file using some fraction of the total flux [specify in this line])
+Mask file type (1 == normal mask, 2 == construct mask from file using some fraction of the total flux [specify in this line])
 1
-    The name of the output text file containing the asymmetry information
+The name of the output text file containing the asymmetry information
 filename
-    Centre Location (Only used in the Asymmetry3D calculation, but this line is always required.)
+Centre Location (Only used in the Asymmetry3D calculation, but this line is always required.)
 x   y   z
-    Background Switch ( 1 == Estimate the asymmetry due to the background noise, 2 == no background)
+Background Switch ( 1 == Estimate the asymmetry due to the background noise, 2 == no background)
 2
-    Asymmetry Method Switch (0==Absolute sign method, 1== Squared Difference Method)
+Asymmetry Method Switch (0==Absolute sign method, 1== Squared Difference Method)
 1
-    That random see to be used for any calculations (if >0, the time will be used to get a seed)
+That random see to be used for any calculations (if >0, the time will be used to get a seed)
 -1
 
 
