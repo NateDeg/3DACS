@@ -1,8 +1,9 @@
 3D Asymmetries in data CubeS
+aka 3DACS
 
 version: 1.0
 
-Nov. 9, 2022
+June 5, 2023
 
 ----
 Description:
@@ -13,15 +14,15 @@ which calculates the 1D, 2D, and 3D asymmetry of a cube (plus mask) about a spec
 
 The second code is:
 Min_Asymmetry3D
-which attempts to find the point that minimizes the asymmetry for the 1D, 2D, and 3D calculations.
-
-    **THE MINIMIZATION CODE IS STILL UNDER DEVELOPMENT AND IS NOT CURRENTLY FUNCTIONAL
-    
-
-
+which attempts to find the point that minimizes the asymmetry for the 1D, 2D, and 3D calculations.    
 
 ----
 authors: N. Deg
+
+--
+Paper Reference:
+Deg et al., 2023, MNRAS
+
 
 -----
 
@@ -75,7 +76,29 @@ For example, in the main folder, the core code can be run:
 
 The codes can be run to either calculate the asymmetries using the traditional absolute value method, or using a modified square difference method.  This can be switched in the input file.
 
+---
+Inputs
 
+There are a variety of required inputs in the input file.  The file format structure is
+--       Name of the Data cube
+filename
+--    Mask file name
+filename
+--    Mask file type (1 == normal mask, 2 == construct mask from file using some fraction of the total flux [specify in this line])
+1
+--    The name of the output text file containing the asymmetry information
+filename
+--    Centre Location (Only used in the Asymmetry3D calculation, but this line is always required.)
+x   y   z
+--    Background Switch ( 1 == Estimate the asymmetry due to the background noise, 2 == no background)
+2
+--    Asymmetry Method Switch (0==Absolute sign method, 1== Squared Difference Method)
+1
+--    That random see to be used for any calculations (if >0, the time will be used to get a seed)
+-1
+
+
+Do note that all the lines are required in this specific order.
 
 
 
