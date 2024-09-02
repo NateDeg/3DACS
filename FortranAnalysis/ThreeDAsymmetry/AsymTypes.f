@@ -103,6 +103,9 @@ c      denom=Asym%TotFlux-Asym%Back_Asym
       denom=Asym%TotFlux-Asym%Back_Asym
 
       Asym%Asym=sqrt(numer/denom)
+      if(numer .lt. 0.) then
+        Asym%Asym=-1.
+      endif
       print*, "Squared Diff Check",Asym%TotAbsDiff
      &          ,Asym%TotFlux,Asym%Back_Asym
      &          , Asym%Asym
