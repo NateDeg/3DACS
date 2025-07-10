@@ -76,7 +76,7 @@ c
       Type(DataCube),INTENT(INOUT) ::  DC
 
 
-      print*, "Core 3D Asymmetry"
+      print*, "Core Asymmetry"
 c
 c      Get the signal asymmetry value
       call GetSignalAsym(DC,CubeAsym)
@@ -84,7 +84,9 @@ c       Set the cube signal asymmetry value
       DC%DA%Signal_Asym=CubeAsym%Asym
       DC%DA%TotAbsDiff=CubeAsym%TotAbsDiff
       DC%DA%TotFlux=CubeAsym%TotFlux
+      DC%DA%nPairs=CubeAsym%nPairs
 c
+c      print*, "Core Pair Check",CubeAsym%nPairs
       if(DC%DA%BackgroundAsymFlag) then
         call BackAsymPoint(BackSum,CubeAsym%nPairs
      &          ,DC%DH%Uncertainty)

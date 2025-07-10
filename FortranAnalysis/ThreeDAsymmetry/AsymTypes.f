@@ -106,9 +106,9 @@ c      denom=Asym%TotFlux-Asym%Back_Asym
       if(numer .lt. 0.) then
         Asym%Asym=-1.
       endif
-      print*, "Squared Diff Check",Asym%TotAbsDiff
-     &          ,Asym%TotFlux,Asym%Back_Asym
-     &          , Asym%Asym
+c      print*, "Squared Diff Check",Asym%TotAbsDiff
+c     &          ,Asym%TotFlux,Asym%Back_Asym
+c     &          , Asym%Asym
 
 
       return
@@ -126,7 +126,7 @@ ccccc
       real T1,T2
 
       BackSum=2.*real(nPairs)*RMS**2.
-      print*, "BackSum Calculation", nPairs, RMS,nPairs/2
+c      print*, "BackSum Calculation", nPairs, RMS,nPairs/2
 c      BackSum=0.
 c      do i=1, nPairs
 c        T1=gasdev(idum)*RMS

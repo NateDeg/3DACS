@@ -85,6 +85,10 @@ c           Write out the 3D asymmetry measures
      &          ,ObservedDC%DA%Asym,LineStr)
 
 
+      VarName="nPair_3D"
+      call WriteIntegerOutputStr(WriteUnit,VarName
+     &          ,ObservedDC%DA%nPairs,LineStr)
+c      print*, "Pair Check",ObservedDC%DA%nPairs
 
 c           Write out the 2D asymmetry measures
       write(WriteUnit,'(a)') ""
@@ -125,7 +129,9 @@ c           Write out the 2D asymmetry measures
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedMap%DA%TotFlux,LineStr)
 
-
+      VarName="nPair_2D"
+      call WriteIntegerOutputStr(WriteUnit,VarName
+     &          ,ObservedMap%DA%nPairs,LineStr)
 
 c           Write out the 1D asymmetry measures
       write(WriteUnit,'(a)') ""
@@ -160,6 +166,10 @@ c           Write out the 1D asymmetry measures
       call WriteRealOutputStr(WriteUnit,VarName
      &          ,ObservedProfile%DA%TotFlux,LineStr)
 
+      VarName="nPair_1D"
+      call WriteIntegerOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%nPairs,LineStr)
+
       close(10)
 
       return
@@ -177,6 +187,25 @@ c       This subroutine makes an output string from a real value
       character(20) ValStr
 
       write(ValStr,'(F15.7)') Val
+      Line=trim(VarName)//"="//trim(ValStr)
+      write(Unit,'(a)') trim(Line)
+    
+      return
+      end subroutine
+ccccc
+
+
+cccc
+c       This subroutine makes an output string from an integer value
+      subroutine WriteIntegerOutputStr(Unit,VarName,Val,Line)
+      implicit none
+      integer,INTENT(IN) :: Unit
+      integer,intent(IN) :: Val
+      character(50),INTENT(IN):: VarName
+      character(100),INTENT(INOUT):: Line
+      character(20) ValStr
+
+      write(ValStr,'(I15)') Val
       Line=trim(VarName)//"="//trim(ValStr)
       write(Unit,'(a)') trim(Line)
     
