@@ -12,12 +12,13 @@ c           regular X intervals using a trapezoid rul
       real,INTENT(IN) :: X(n),Y(n),XEdge(2)
       real,INTENT(INOUT) :: Integral
 
-      integer i,j
+      integer i,j, IDLow,IDHigh
       real dX
       integer EdgeIDs(2),nBody,BodyLims(2)
       real BodyTerm,EdgeTerm
       real P1(2),P2(2),YEdge
 
+c       print*, "Tab Int", XEdge,n,X(n)
 c       First figure out dX
       dX=X(2)-X(1)
 c       Figure out the bin ids of the two edges
@@ -36,6 +37,8 @@ c       Do the body integration
       nBody=EdgeIDs(2)-EdgeIDs(1)-1
       BodyLims(1)=EdgeIDs(1)+1
       BodyLims(2)=EdgeIDs(2)
+c      print*, "Tab Check", EdgeIDs
+c     &      ,BodyLims,n,nBody
 c      print*, "number of points in body integration", nBody
       call TrapzBodyIntegration(BodyTerm,nBody+1
      &          ,X(BodyLims(1):BodyLims(2))
@@ -43,6 +46,14 @@ c      print*, "number of points in body integration", nBody
 
 c      print*, "Body integration", BodyTerm
 c       Now do the 2 edge integrations
+    
+      if (EdgeIDs(1) .lt. 0) then
+        EdgeIDs(1)=0
+      endif
+      if (EdgeIDs(2) .eq. n) then
+        EdgeIDs(2)=n-1
+      endif
+    
       call TrapzEdgeIntegration(EdgeTerm,nBody+3
      &                          ,X(EdgeIDs(1):EdgeIDs(2)+1)
      &                          ,Y(EdgeIDs(1):EdgeIDs(2)+1)

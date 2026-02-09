@@ -18,8 +18,11 @@ InputObj= InputUnitConversions.o DataCubeInput.o AsymmetryIn.o
 #	The S/N estimation routines
 SNRObj= EstimateCubeNoise.o SNR_Estimate.o
 
-
+#   The 3D asymmetry core routines
 ThreeDAsymObj= ThreeDAsym_Minimum.o ThreeDAsym_Core.o AsymTypes.o
+
+#   The profile lopsidedness routines
+LopsideObj= ProfileLopsidedNessCalc.o
 
 #	Minimizer Routines
 MinimizationObj=DownhillSimplex.o
@@ -34,6 +37,6 @@ OutputObj=AsymmetryOutputs.o
 #Finally list the different program main objects
 ProgramObj=Asymmetry3D.o Min_Asymmetry3D.o
 
-AllObj = $(StandardMathObj) $(ObjectDefObj) $(GlobalObj) $(InputObj) $(MinimizationObj) $(ThreeDAsymObj) $(SNRObj) $(OutputObj) $(IniObj)
+AllObj = $(StandardMathObj) $(ObjectDefObj) $(GlobalObj) $(InputObj) $(MinimizationObj) $(ThreeDAsymObj) $(LopsideObj) $(SNRObj) $(OutputObj) $(IniObj)
 
 

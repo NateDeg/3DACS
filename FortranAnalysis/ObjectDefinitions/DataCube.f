@@ -38,6 +38,9 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
         real RotationPoint(3)
         integer EstimatedCenterIndices(3)
         integer AsymMethodSwitch
+        real LopA, LopC,LopP,LopQ
+        real LopB,LopRMS
+        real LopVSys,LopChan
       end Type
 
 

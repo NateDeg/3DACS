@@ -15,6 +15,7 @@ c       Modules neeeded at this level
       use SNRCalcMod
       use AsymmetryOutputsMod
       use AsymTypesMod
+      use ProfileLopsidednessMod
       implicit none
 
       real SNPeak,SNA,SN_Int,SN_Med
@@ -47,6 +48,7 @@ c           get some S/N measures
      &                    ,SNPeak,SNA,SN_Int,SN_Med)
 
       print*, "Symmetric Flag",ObservedDC%DH%SymmetricMaskSwitch
+c      ObservedDC%DH%SymmetricMaskSwitch=0
 c           Symmeterize the mask about the rotation point
       if(ObservedDC%DH%SymmetricMaskSwitch.eq. 1) then
         call MakeSymmetricMask(ObservedDC%DA%RotationPoint
@@ -87,15 +89,12 @@ c           Do the full 3D asymmetry calculation
 
 c           Do the moment map signal asymmetry
       call ThreeDAsym_CenterSet(ObservedMap)
-c      call GetSignalAsym(ObservedMap,MapAsym)
-c      ObservedMap%DA%Signal_Asym=MapAsym%Asym
-c      ObservedMap%DA%Asym=MapAsym%Asym
-c      ObservedMap%DA%TotAbsDiff=MapAsym%TotAbsDiff
-c      ObservedMap%DA%TotFlux=MapAsym%TotFlux
-
 
 c           Also do the moment map signal asymmetry
       call ThreeDAsym_CenterSet(ObservedProfile)
+
+c           Add in a calculation for the profile lopsidedness
+      call CalcProfileLopsidedness(ObservedProfile)
 
 
       print*, " "
@@ -132,6 +131,22 @@ c           Also do the moment map signal asymmetry
       print*, "1D Background Asymmetry =", ObservedProfile%DA%Back_Asym
       print*, "Total Numerator =", ObservedProfile%DA%TotAbsDiff
       print*, "Total Denominator =", ObservedProfile%DA%TotFlux
+
+      print*, " "
+      print*, "1D Lopsided calculated about point:"
+     &              ,ObservedProfile%DA%LopChan
+      print*, "1D lopsided RMS Estimate: "
+     &          ,ObservedProfile%DA%LopRMS
+      print*, "1D Total lopsidedness"
+     &      , ObservedProfile%DA%LopA
+      print*, "1D Signal lopsidedness ="
+     &      , ObservedProfile%DA%LopC
+      print*, "1D Background lopsidedness ="
+     &      , ObservedProfile%DA%LopB
+      print*, "Total lopsidedness Numerator ="
+     &      , ObservedProfile%DA%LopP
+      print*, "Total lopsidedness Denominator ="
+     &      , ObservedProfile%DA%LopQ
 
 
       call OutputAsymmetry(SNPeak,SNA,SN_Int,SN_Med)

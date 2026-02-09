@@ -76,7 +76,9 @@ c
       Type(DataCube),INTENT(INOUT) ::  DC
 
 
-      print*, "Core Asymmetry"
+c      print*, "Core Asymmetry"
+c      print*, "Uncertainty Used"
+c     &      ,DC%DH%Uncertainty
 c
 c      Get the signal asymmetry value
       call GetSignalAsym(DC,CubeAsym)

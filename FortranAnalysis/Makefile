@@ -18,7 +18,8 @@ LocalLib:
 	cd Inputs; make all;
 	cd Initialization; make all;
 	cd Minimizers; make;
-	cd ThreeDAsymmetry; make; 
+	cd ThreeDAsymmetry; make;
+	cd ProfileLopsidedness; make
 	cd Outputs; make;
 	cd Mains; make;
 
@@ -37,6 +38,7 @@ clean:
 	cd Minimizers; make clean;
 	cd Initialization; make clean;
 	cd ThreeDAsymmetry; make clean;
+	cd ProfileLopsidedness; make clean;
 	cd Outputs; make clean;
 	cd Mains; make clean;
 
