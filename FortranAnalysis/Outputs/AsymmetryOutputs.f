@@ -170,6 +170,44 @@ c           Write out the 1D asymmetry measures
       call WriteIntegerOutputStr(WriteUnit,VarName
      &          ,ObservedProfile%DA%nPairs,LineStr)
 
+c           Write out the 1D lopsidedness measures
+      write(WriteUnit,'(a)') ""
+      VarName="Lop_Point_1D"
+      LineStr=trim(VarName)//"=["
+      write(ValStr,'(F8.3)') ObservedProfile%DA%LopChan
+      LineStr=trim(LineStr)//trim(ValStr)
+      LineStr=trim(LineStr)//"]"
+      write(WriteUnit,'(a)') trim(LineStr)
+
+      VarName="Lop_RMS"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%LopRMS,LineStr)
+
+      VarName="LopA1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%LopA,LineStr)
+
+      VarName="LopC1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%LopC,LineStr)
+
+      VarName="LopB1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%LopB,LineStr)
+
+      VarName="LopP1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%LopP,LineStr)
+
+      VarName="LopQ1D"
+      call WriteRealOutputStr(WriteUnit,VarName
+     &          ,ObservedProfile%DA%LopQ,LineStr)
+
+      VarName="LopnPair_1D"
+      call WriteIntegerOutputStr(WriteUnit,VarName
+     &          ,1,LineStr)
+
+
       close(10)
 
       return

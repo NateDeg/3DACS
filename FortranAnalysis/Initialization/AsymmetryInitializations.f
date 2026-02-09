@@ -181,7 +181,7 @@ c       The channel rotation point is 0
       ObservedMap%DA%RotationPoint(3)=0
 c       The mask can't be adjusted for a moment 0 map
       ObservedMap%DH%SymmetricMaskSwitch=0
-      print*, "Moment Calculation Checks", ObservedMap%DH%Uncertainty
+c      print*, "Moment Calculation Checks", ObservedMap%DH%Uncertainty
 
 c       Allocate the map
       call AllocateDataCube(ObservedMap)
@@ -235,6 +235,8 @@ c           The profile is stored in the ObservedProfile object
       integer i,j,k
       integer nChan, nCells,TCells
       real CellCount
+      real,ALLOCATABLE :: SigmaChannel(:)
+      real ConvolutionFactor
 
 c       Copy the observed data cube header to the profile
       ObservedProfile%DH=ObservedDC%DH
@@ -248,6 +250,17 @@ c       The mask can't be adjusted for a profile
       ObservedProfile%DH%SymmetricMaskSwitch=0
 c           Allocate the profile
       call AllocateDataCube(ObservedProfile)
+
+
+      ALLOCATE(SigmaChannel(0:ObservedDC%DH%nChannels-1))
+      ConvolutionFactor=4.*Pi
+     &          *Beam%BeamSigmaVector(0)
+     &          *Beam%BeamSigmaVector(1)
+c      print*, "Beam Area Check"
+c     &      ,Beam%BeamSigmaVector(0)
+c     &      ,Beam%BeamSigmaVector(1)
+c     &      ,ConvolutionFactor
+
 c           Loop over all channels
       CellCount=0.
       TCells=0
@@ -264,6 +277,11 @@ c           Sum the flux in all pixels for a given channel
                 endif
             enddo
         enddo
+c        print*, nCells
+        SigmaChannel(i)=(ObservedDC%DH%Uncertainty**2.
+     &              *real(nCells)
+     &              *ConvolutionFactor)**0.5
+c        print*, i, SigmaChannel(i)
         CellCount=CellCount+sqrt(real(nCells))
         TCells=TCells+nCells
         if(ObservedProfile%Flux(0,0,i) .ne. 0.0) then
@@ -281,9 +299,84 @@ c      print*, CellCount,TCells,nChan
      &          *sqrt(TCells/real(nChan))
 
 
+c       Get the profile uncertainty
       ObservedProfile%DH%Uncertainty=ObservedProfile%DH%Uncertainty
      &          *CellCount/real(nChan)
-c      print*, "New Profile uncertainty",ObservedProfile%DH%Uncertainty
+c       An extra factor must be added to the noise
+c           to account for the beam correlation
+
+c      print*, "Initial Estimate"
+c     &      ,ObservedProfile%DH%Uncertainty
+c     &      ,ObservedProfile%DH%ExpectedUncertainty
+c     &  ,ObservedProfile%DH%ExpectedUncertaintySquared
+
+      ObservedProfile%DH%Uncertainty=
+     &         ObservedProfile%DH%Uncertainty
+     &          *sqrt(ConvolutionFactor)
+
+      ObservedProfile%DH%ExpectedUncertainty=
+     &         ObservedProfile%DH%ExpectedUncertainty
+     &          *sqrt(ConvolutionFactor)
+
+      ObservedProfile%DH%ExpectedUncertaintySquared=
+     &   ObservedProfile%DH%ExpectedUncertaintySquared
+     &          *sqrt(ConvolutionFactor)
+
+c      print*, "Convolved Estimate"
+c     &      ,ObservedProfile%DH%Uncertainty
+c     &      ,ObservedProfile%DH%ExpectedUncertainty
+c     &  ,ObservedProfile%DH%ExpectedUncertaintySquared
+
+
+c      ObservedProfile%DH%Uncertainty
+c     &    =(ObservedProfile%DH%Uncertainty**2.
+c     &      *(4.*Pi*Beam%BeamSigmaVector(0)
+c     &          *Beam%BeamSigmaVector(1)))**0.5
+c       A similar factor needs to be added to the 'expected uncertainty'
+c      print*, "Ori 1D"
+c     &  ,ObservedProfile%DH%ExpectedUncertainty
+c     &  ,4.*Pi*Beam%BeamSigmaVector(0)
+c     &          *Beam%BeamSigmaVector(1)
+c     &  ,Beam%BeamSigmaVector(0)
+    
+c      ObservedProfile%DH%ExpectedUncertainty
+c     &    =((ObservedProfile%DH
+c     &          %ExpectedUncertainty)
+c     &      *(4.*Pi*Beam%BeamSigmaVector(0)
+c     &          *Beam%BeamSigmaVector(1)))
+c       And to the expected uncertainty squared
+
+c      ObservedProfile%DH%ExpectedUncertaintySquared
+c     &    =ObservedProfile%DH%ExpectedUncertainty**2.
+
+
+c      print*, "Avg Noise",
+c     &          sqrt(sum(SigmaChannel**2.)/real(nChan))
+
+c      print*, "Simple Check", ObservedDC%DH%Uncertainty
+c     &          ,ObservedDC%DH%Uncertainty
+c     &          *sqrt(CellCount*ConvolutionFactor)
+c     *          /sqrt(real(nChan))
+      ObservedProfile%DH%ExpectedUncertaintySquared=
+     &           ObservedDC%DH%Uncertainty
+     &          *sqrt(TCells*ConvolutionFactor)
+     &          /sqrt(real(nChan))
+c      ObservedProfile%DH%ExpectedUncertaintySquared=
+c     &   sqrt(sum(SigmaChannel**2.))/real(nChan)
+
+c      open(20,file="TestProfile.txt")
+c      do i=0,ObservedDC%DH%nChannels-1
+c        write(20,*) i
+c     &          , ObservedProfile%MaskedFlux(0,0,i)
+c     &          , SigmaChannel(i)
+c     & ,ObservedProfile%DH%ExpectedUncertaintySquared
+c     & ,ObservedProfile%DH%ExpectedUncertainty
+c      enddo
+c      close(20)
+
+      DEALLOCATE(SigmaChannel)
+
+c      print*,Beam%BeamSigmaVector
 c      print*,"Profile Flux Check", sum(ObservedProfile%Flux(0,0,:))
       return
       end subroutine
